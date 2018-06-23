@@ -16,12 +16,12 @@ def load(fp):
 		line = line.split(' ')
 		if line[0] == 'NEST':
 			key = ' '.join(line[1:])
-			nested = list(itertools.takewhile(lambda line: not line.strip().startswith('TSEN'), lines[i:]))
+			nested = list(itertools.takewhile(lambda line: not line.lstrip().startswith('TSEN'), lines[i:]))
 			i += len(nested)
 			result[key] = load(nested)
 		elif line[0] == 'STRING':
 			key = ' '.join(line[1:])
-			string = list(itertools.takewhile(lambda line: line.rstrip() != 'GRINTS', lines[i:]))
+			string = list(itertools.takewhile(lambda line: not line.lstrip().startswith('GRINTS'), lines[i:]))
 			i += len(string)
 			result[key] = '\n'.join(string)
 		else:
