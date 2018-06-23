@@ -1,20 +1,37 @@
 #!/usr/bin/env python3
 # encoding: utf-8
 
+import itertools
+
 def load(fp):
 	result = {}
-	for line in fp:
-		line = line.strip()
+	lines = list(fp)
+	i = 0
+	while i < len(lines):
+		line = lines[i].strip()
+		i += 1
 		if line.startswith('#') or not line:
 			continue
 
-		xs = line.split('=')
-		if len(xs) == 1:
-			continue
+		line = line.split(' ')
+		if line[0] == 'NEST':
+			key = ' '.join(line[1:])
+			nested = list(itertools.takewhile(lambda line: not line.strip().startswith('TSEN'), lines[i:]))
+			i += len(nested)
+			result[key] = load(nested)
+		elif line[0] == 'STRING':
+			key = ' '.join(line[1:])
+			string = list(itertools.takewhile(lambda line: line.rstrip() != 'GRINTS', lines[i:]))
+			i += len(string)
+			result[key] = '\n'.join(string)
+		else:
+			line = ' '.join(line).split('=')
+			if len(line) == 1:
+				continue
 
-		key = xs[0]
-		value = '='.join(xs[1:])
-		result[key] = value
+			key = line[0]
+			value = '='.join(line[1:])
+			result[key] = value
 
 	return result
 
