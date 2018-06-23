@@ -1,0 +1,6 @@
+__pycache__/
+*.swp
+*.py[cod]
+venv/
+.venv/
+/*.egg_info/
